@@ -1,11 +1,12 @@
-from unittest import TestCase
+import unittest
 import json
 
 from app.api.v1 import app
 
-class StoreManagerApp(TestCase):
+class StoreManagerApp(unittest.TestCase):
   def setUp(self):
-    self.client = app.test_client()
+    self.app = app
+    self.client = self.app.test_client()
     self.products = {
       "name":"rtfhyuijk",
 	    "quantity":"0",
