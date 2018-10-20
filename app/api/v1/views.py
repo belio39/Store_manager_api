@@ -6,9 +6,9 @@ import re
 from . import app
 from app.api.v1.models import Products, products, Sales, sales
 
-@app.route('/products', methods=['GET'])
+@app.route('/', methods=['GET'])
 def main():
-  return jsonify(products)
+  return 'This is main store manager'
 
 @app.route('/api/v1/products', methods=['GET'])
 def get_all_products():
