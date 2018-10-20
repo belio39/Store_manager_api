@@ -1,0 +1,6 @@
+# files to ignore
+.vscode/
+.env
+venv/
+/__pycache__/
+/__pycache__/products_test.cpython-36.pyc
