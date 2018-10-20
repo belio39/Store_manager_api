@@ -2,6 +2,7 @@ import unittest
 import json
 
 from app.api.v1 import app
+from run import jwt
 
 class StoreManagerApp(unittest.TestCase):
   def setUp(self):
@@ -17,18 +18,10 @@ class StoreManagerApp(unittest.TestCase):
       "office":"jogoo",
       "price":"123"
     }
-    self.existingUsers  = {
+    self.user  = {
       "name": "Belio Dennis",
       "password": "belio",
       "email": "belio@gmail.com",
-      "isStoreAttendant": "isStoreAttendant",
-      "isAdmin": "isAdmin"
-    }
-    self.existingUserswithoutname = {
-      "password": "belio",
-      "email": "belio@gmail.com",
-      "isStoreAttendant": "isStoreAttendant",
-      "isAdmin": "isAdmin"
     }
 
     self.productswithoutname = {
