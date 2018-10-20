@@ -2,19 +2,22 @@ from flask_api import FlaskAPI
 from flask import jsonify, request
 from datetime import datetime
 import re
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 from . import app
-from app.api.v1.models import Products, products, Sales, sales
+from app.api.v1.models import Products, products, Sales, sales, existingUsers, User
 
 @app.route('/', methods=['GET'])
 def main():
   return 'This is main store manager'
 
 @app.route('/api/v1/products', methods=['GET'])
+@jwt_required
 def get_all_products():
   return jsonify({'products': products}), 200
 
 @app.route('/api/v1/products/<int:_id>', methods=['GET'])
+@jwt_required
 def get_one_product(_id):
   prod = [product for product in products if product['id'] == _id] or None
   if prod:
@@ -24,6 +27,7 @@ def get_one_product(_id):
   return jsonify({'message': "You have no product yet"}), 200
 
 @app.route('/api/v1/products', methods=['POST'])
+@jwt_required
 def create_products():
   if request.json:
     if request.json.get('name'):
@@ -47,6 +51,7 @@ def create_products():
   return jsonify({"message": "bad request"}), 400
 
 @app.route('/api/v1/sales', methods=['POST'])
+@jwt_required
 def create_sales():
   if request.json:
     if request.json.get('attendant'):
@@ -70,6 +75,7 @@ def create_sales():
   return jsonify({"message": "bad request"}), 400
 
 @app.route('/api/v1/sales/<int:_id>', methods=['GET'])
+@jwt_required
 def get_one_sale(_id):
   sal = [sale for sale in sales if sale['id'] == _id] or None
   if sal:
@@ -78,6 +84,7 @@ def get_one_sale(_id):
     return jsonify({'message': "specific product not found"}), 200
 
 @app.route('/api/v1/sales', methods=['GET'])
+@jwt_required
 def get_all_sales():
   return jsonify({'sales': sales}), 200
 
@@ -88,17 +95,16 @@ def login():
             if re.match(r"[A-Za-z0-9]+@[A-Za-z0-9]+.[A-Za-z0-9]", request.json.get('email')):
                 if request.json.get('password'):
                     for user in existingUsers:
-                        if user["email"] == request.json['email'].encode('utf-8') and user["password"] == request.json['password'].encode('utf-8'):
-                            if loggedIn:
-                                loggedIn[:] = []
-                            loggedIn.append(user)
-                            return jsonify({"message": "logged in successfully"}), 200
-                        pass
-                    return jsonify({"message": "invalid  credentials"}), 200
-                return jsonify({"message": "please provide a password"}), 200
-            return jsonify({"message": "Invalid email format"}), 200
-        return jsonify({"message": "please provide an email"}), 200
-    return jsonify({"message": "data must be json serialized"}), 200
+                      print('print', request.json.get('email'))
+                      print('existing', existingUsers)
+                      if (user['email'] == request.json.get('email')) and (user['password'] == request.json.get('password')):
+                        access_token = create_access_token(identity=user['email'])
+                        return jsonify({"token": access_token, "message": "logged in successfully"}), 200
+                    return jsonify({"message": "invalid  credentials"}), 400
+                return jsonify({"message": "please provide a password"}), 400
+            return jsonify({"message": "Invalid email format"}), 400
+        return jsonify({"message": "please provide an email"}), 400
+    return jsonify({"message": "data must be json serialized"}), 400
 
 @app.route('/api/v1/auth/signup', methods=['POST'])
 def signup():
@@ -108,16 +114,14 @@ def signup():
                 if request.json.get('password'):
                     if request.json.get('name'):
                         try:
-                            if loggedIn[0]["isAdmin"]:
-                                name = str(request.json.get('name'))
-                                email = request.json.get('email').encode('utf-8')
-                                password = request.json.get('password').encode('utf-8')
-                                isStoreAttendant = request.json.get('isStoreAttendant')
-                                isAdmin = request.json.get('isAdmin')
-                                thisUser = Users(name=name, email=email, password=password, isStoreAttendant=isStoreAttendant, isAdmin=isAdmin)
-                                thisUser.save()
-                                return jsonify({"message": "User created successfully"})
-                            return jsonify({"message": "Only admin can do that"}), 401
+                            name = str(request.json.get('name'))
+                            email = request.json.get('email')
+                            password = request.json.get('password')
+                            isStoreAttendant = request.json.get('isStoreAttendant')
+                            isAdmin = request.json.get('isAdmin')
+                            thisUser = User(name=name, email=email, password=password, isStoreAttendant=isStoreAttendant, isAdmin=isAdmin)
+                            thisUser.save()
+                            return jsonify({"message": "User created successfully"})
                         except IndexError:
                             return jsonify({"message": "no logged in user"})
                     return jsonify({"message": "please provide a name"}), 200

@@ -58,16 +58,7 @@ class Sales():
       }
     sales.append(current_sale)
     return current_sale
-
-existingUsers = [
-  {
-        "name": "Belio Dennis",
-        "password": "belio",
-        "email": "belio@gmail.com",
-        "isStoreAttendant": False,
-        "isAdmin": True,
-  }
-]
+    
 
 class User():
   def __init__(self, name, email, password, isAdmin=False, isStoreAttendant=False):

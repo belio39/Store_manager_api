@@ -4,9 +4,9 @@ import os
 
 class Config(object):
 
-  DEBUG = False
+  DEBUG = True
   CSRF_ENABLED = True
-  SECRET = os.getenv('SECRET')
+  SECRET = os.getenv('SECRET_KEY')
 
 class DevelopmentConfig(Config):
 
