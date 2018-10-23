@@ -11,6 +11,8 @@ from app.api.v1.models import Products, products, Sales, sales, existingUsers, U
 def main():
   return 'This is main store manager'
 
+"""Provide a method to create access tokens. The create_access_token()"""
+
 @app.route('/api/v1/products', methods=['GET'])
 @jwt_required
 def get_all_products():
@@ -95,11 +97,9 @@ def login():
             if re.match(r"[A-Za-z0-9]+@[A-Za-z0-9]+.[A-Za-z0-9]", request.json.get('email')):
                 if request.json.get('password'):
                     for user in existingUsers:
-                      print('print', request.json.get('email'))
-                      print('existing', existingUsers)
                       if (user['email'] == request.json.get('email')) and (user['password'] == request.json.get('password')):
                         access_token = create_access_token(identity=user['email'])
-                        return jsonify({"token": access_token, "message": "logged in successfully"}), 200
+                        return jsonify({"access_token": access_token, "message": "logged in successfully"}), 200
                     return jsonify({"message": "invalid  credentials"}), 400
                 return jsonify({"message": "please provide a password"}), 400
             return jsonify({"message": "Invalid email format"}), 400
