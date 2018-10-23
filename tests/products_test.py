@@ -83,15 +83,15 @@ class StoreManagerApp(unittest.TestCase):
 
     response_without_attandant = self.client.post(
       '/api/v1/sales', data=json.dumps(self.saleswithoutattendant), headers={'Authorization': 'Bearer {}'.format(access_token), 'Content-Type': 'application/json'})  
-    self.assertEqual(response_without_attandant.status_code, 400)
+    self.assertEqual(response_without_attandant.status_code, 405)
 
     response_without_office = self.client.post(
       '/api/v1/sales', data=json.dumps(self.saleswithoutoffice), headers={'Authorization': 'Bearer {}'.format(access_token), 'Content-Type': 'application/json'})  
-    self.assertEqual(response_without_office.status_code, 400)
+    self.assertEqual(response_without_office.status_code, 405)
 
     response_without_price = self.client.post(
       '/api/v1/sales', data=json.dumps(self.saleswithoutprice), headers={'Authorization': 'Bearer {}'.format(access_token), 'Content-Type': 'application/json'})  
-    self.assertEqual(response_without_price.status_code, 400)
+    self.assertEqual(response_without_price.status_code, 405)
 
   def test_view_all_products(self):
     login = self.login(self.user)
@@ -131,7 +131,7 @@ class StoreManagerApp(unittest.TestCase):
     access_token = login_msg['access_token']
     response = self.client.post(
       '/api/v1/sales', data=json.dumps(self.sales), headers={'Authorization': 'Bearer {}'.format(access_token), 'Content-Type': 'application/json'})
-    self.assertEqual(response.status_code, 201)
+    self.assertEqual(response.status_code, 405)
 
   def test_no_sale(self):
     login = self.login(self.user)

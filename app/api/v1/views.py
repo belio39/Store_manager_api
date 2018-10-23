@@ -31,50 +31,26 @@ def get_one_product(_id):
 @app.route('/api/v1/products', methods=['POST'])
 @jwt_required
 def create_products():
-  if request.json:
-    if request.json.get('name'):
-      if request.json.get('quantity'):
-        if request.json.get('price'):
-          if re.match(r"^[A-Za-z0-9]", request.json.get('name')):
-            data = request.json
-            name = data['name']
-            quantity = data['quantity']
-            price = data['price']
-            date_posted = datetime.now()
-            new_product = Products(name, quantity, price, date_posted)
-            return jsonify({
-              'message': 'success, Product created',
-              'product': new_product.save()
-            }), 201
-          return jsonify({"message": "name should contain........"})
-        return jsonify({"message": "product needs a price"}), 400
-      return jsonify({"message": "product needs a quantity"}), 400
+  if not request.json:
+    return jsonify({"message": "bad request"}), 400
+  if not request.json.get('name'):
     return jsonify({"message": "product needs a name"}), 400
-  return jsonify({"message": "bad request"}), 400
-
-@app.route('/api/v1/sales', methods=['POST'])
-@jwt_required
-def create_sales():
-  if request.json:
-    if request.json.get('attendant'):
-      if request.json.get('office'):
-        if request.json.get('price'):
-          if re.match(r"^[A-Za-z0-9]", request.json.get('attendant')):
-            data = request.json
-            attendant = data['attendant']
-            office = data['office']
-            price = data['price']
-            date_posted = datetime.now()
-            new_sale = Sales(attendant, office, price, date_posted)
-            return jsonify({
-              'message': 'success, Sale created',
-              'sale': new_sale.save()
-            }), 201
-          return jsonify({"message": "name should contain........"})  
-        return jsonify({"message": "sale needs a price"}), 400       
-      return jsonify({"message": "sale needs office"}), 400   
-    return jsonify({"message": "sale needs a attendant"}), 400        
-  return jsonify({"message": "bad request"}), 400
+  if not request.json.get('quantity'):
+    return jsonify({"message": "product needs a quantity"}), 400
+  if not request.json.get('price'):
+    return jsonify({"message": "product needs a price"}), 400
+  if not re.match(r"^[A-Za-z0-9]", request.json.get('name')):
+    return jsonify({"message": "name should contain........"})
+  data = request.json
+  name = data['name']
+  quantity = data['quantity']
+  price = data['price']
+  date_posted = datetime.now()
+  new_product = Products(name, quantity, price, date_posted)
+  return jsonify({
+      'message': 'success, Product created',
+      'product': new_product.save()
+    }), 201
 
 @app.route('/api/v1/sales/<int:_id>', methods=['GET'])
 @jwt_required
@@ -92,40 +68,40 @@ def get_all_sales():
 
 @app.route('/api/v1/auth/login', methods=['POST'])
 def login():
-    if request.json:
-        if request.json.get('email'):
-            if re.match(r"[A-Za-z0-9]+@[A-Za-z0-9]+.[A-Za-z0-9]", request.json.get('email')):
-                if request.json.get('password'):
-                    for user in existingUsers:
-                      if (user['email'] == request.json.get('email')) and (user['password'] == request.json.get('password')):
-                        access_token = create_access_token(identity=user['email'])
-                        return jsonify({"access_token": access_token, "message": "logged in successfully"}), 200
-                    return jsonify({"message": "invalid  credentials"}), 400
-                return jsonify({"message": "please provide a password"}), 400
-            return jsonify({"message": "Invalid email format"}), 400
-        return jsonify({"message": "please provide an email"}), 400
+  if not request.json:
     return jsonify({"message": "data must be json serialized"}), 400
+  if not request.json.get('email'):
+    return jsonify({"message": "please provide an email"}), 400
+  if not re.match(r"[A-Za-z0-9]+@[A-Za-z0-9]+.[A-Za-z0-9]", request.json.get('email')):
+    return jsonify({"message": "Invalid email format"}), 400
+  if not request.json.get('password'):
+    return jsonify({"message": "please provide a password"}), 400
+  for user in existingUsers:
+    if (user['email'] == request.json.get('email')) and (user['password'] == request.json.get('password')):
+      access_token = create_access_token(identity=user['email'])
+      return jsonify({"access_token": access_token, "message": "logged in successfully"}), 200
+  return jsonify({"message": "invalid  credentials"}), 400
 
 @app.route('/api/v1/auth/signup', methods=['POST'])
 def signup():
-    if request.json:
-        if request.json.get('email'):
-            if re.match(r"[A-Za-z0-9]+@[A-Za-z0-9]+.[A-Za-z0-9]", request.json.get('email')):
-                if request.json.get('password'):
-                    if request.json.get('name'):
-                        try:
-                            name = str(request.json.get('name'))
-                            email = request.json.get('email')
-                            password = request.json.get('password')
-                            isStoreAttendant = request.json.get('isStoreAttendant')
-                            isAdmin = request.json.get('isAdmin')
-                            thisUser = User(name=name, email=email, password=password, isStoreAttendant=isStoreAttendant, isAdmin=isAdmin)
-                            thisUser.save()
-                            return jsonify({"message": "User created successfully"})
-                        except IndexError:
-                            return jsonify({"message": "no logged in user"})
-                    return jsonify({"message": "please provide a name"}), 200
-                return jsonify({"message": "please provide a password"}), 200
-            return jsonify({"message": "Invalid email format"}), 200
-        return jsonify({"message": "please provide an email"}), 200
+  if not request.json:
     return jsonify({"message": "data must be json serialized"}), 400
+  if not request.json.get('email'):
+    return jsonify({"message": "please provide an email"}), 400
+  if not re.match(r"[A-Za-z0-9]+@[A-Za-z0-9]+.[A-Za-z0-9]", request.json.get('email')):
+    return jsonify({"message": "Invalid email format"}), 400
+  if not request.json.get('password'):
+    return jsonify({"message": "please provide a password"}), 400
+  if not request.json.get('name'):
+    return jsonify({"message": "please provide a name"}), 400
+  try:
+      name = str(request.json.get('name'))
+      email = request.json.get('email')
+      password = request.json.get('password')
+      isStoreAttendant = request.json.get('isStoreAttendant')
+      isAdmin = request.json.get('isAdmin')
+      thisUser = User(name=name, email=email, password=password, isStoreAttendant=isStoreAttendant, isAdmin=isAdmin)
+      thisUser.save()
+      return jsonify({"message": "User created successfully"})
+  except IndexError:
+      return jsonify({"message": "no logged in user"})
