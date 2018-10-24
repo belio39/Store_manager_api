@@ -23,7 +23,7 @@ class StagingConfig(Config):
 
 class ProductionConfig(Config):
 
-  DEBUG = False
+  DEBUG = True
   TESTING = False
 
 app_config = {
