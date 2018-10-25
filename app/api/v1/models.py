@@ -3,12 +3,16 @@ sales = []
 existingUsers = []
 
 class Products():
+  """class that define a product"""
 
+  
   def __init__(self, name, quantity, price, date_posted):
+    """intstanciate product class"""
     self.name = name
     self.quantity = quantity
     self.price = price
     self.date_posted = date_posted
+
 
   def save(self):
     try:
@@ -31,14 +35,21 @@ class Products():
     products.append(current_product)
     return current_product
 
+
 class Sales():
+  """Define sales class"""
+
+
   def __init__(self, attendant, office, price, date_posted):
+    """intstanciate sales class"""
     self.attendant = attendant
     self.office = office
     self.price = price
     self.date_posted = date_posted
 
+
   def save(self):
+    """asdfghjkl;"""
     try:
       current_sale = {
         "attendant": self.attendant,
@@ -47,7 +58,6 @@ class Sales():
         "date_posted": self.date_posted,
         "id": sales[-1]['id']+1
       }
-
     except IndexError:
       current_sale = {
         "attendant": self.attendant,
@@ -58,15 +68,20 @@ class Sales():
       }
     sales.append(current_sale)
     return current_sale
-    
+
 
 class User():
+  """Define user class"""
+
+  
   def __init__(self, name, email, password, isAdmin=False, isStoreAttendant=False):
-        self.name = name
-        self.email = email
-        self.password = password
-        self.isAdmin = isAdmin
-        self.isStoreAttendant = isStoreAttendant
+    """intstanciate user class"""
+    self.name = name
+    self.email = email
+    self.password = password
+    self.isAdmin = isAdmin
+    self.isStoreAttendant = isStoreAttendant
+
 
   def save(self):
     currentUser = {
@@ -76,4 +91,4 @@ class User():
         "isStoreAttendant": self.isStoreAttendant,
         "isAdmin": self.isAdmin,
     }
-    existingUsers.append(currentUser)    
+    existingUsers.append(currentUser)
