@@ -114,6 +114,9 @@ def signup():
     return jsonify({'message': 'Please provide name, email and password'}), 400
   if not re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email):
     return jsonify({"message": "Invalid email format"}), 400
+  user = [user for user in existingUsers if user['name'] == name]
+  if user:
+    return jsonify({"message": "That user already exists"})
   thisUser = User(name=name, email=email, password=password, isStoreAttendant=isStoreAttendant, isAdmin=isAdmin)
   thisUser.save()
   return jsonify({"message": "User created successfully"})
